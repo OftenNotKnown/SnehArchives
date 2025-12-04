@@ -1,79 +1,208 @@
-
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Passworded Bars with Admin UI</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>The Archives — CRT</title>
   <style>
-    :root{--bg:#0f1724;--card:#0b1220;--accent:#7dd3fc;--glass:rgba(255,255,255,0.03)}
-    html,body{height:100%;margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto}
-    body{background:linear-gradient(180deg,#071023 0%, #071b2a 100%);color:#e6f0ff}
-    .viewport{height:100vh;scroll-snap-type:y mandatory;overflow-y:scroll}
+    :root{
+      --crt-blue:#0af;
+      --bg:#000;
+      --card:#020813;
+      --accent:#0af;
+      --glass:rgba(0,20,40,0.3);
+    }
+
+    /* Base */
+    html,body{height:100%;margin:0;font-family:"Courier New",monospace;background:var(--bg);color:var(--crt-blue);letter-spacing:0.4px}
+
+    /* Make everything static */
+    *{animation:none !important;transition:none !important}
+
+    /* CRT overlays */
+    /* Stronger scanlines */
+    body::before{
+      content:"";
+      position:fixed;
+      top:0;left:0;width:100%;height:100%;pointer-events:none;
+      background:
+        repeating-linear-gradient(
+          to bottom,
+          rgba(255,255,255,0.10) 0px,
+          rgba(255,255,255,0.10) 1px,
+          rgba(0,0,0,0) 3px,
+          rgba(0,0,0,0) 6px
+        ),
+        repeating-linear-gradient(
+          to right,
+          rgba(0,150,255,0.05) 0px,
+          rgba(0,150,255,0.05) 1px,
+          rgba(0,0,0,0) 2px,
+          rgba(0,0,0,0) 4px
+        );
+      mix-blend-mode:screen;
+      z-index:99999;
+    }
+    /* Subpixel RGB mask (horizontal stripes) */
+    body::after{
+      content:"";
+      position:fixed;
+      top:0;left:0;width:100%;height:100%;pointer-events:none;
+      background:
+        radial-gradient(circle at center,
+          rgba(0,0,0,0) 50%,
+          rgba(0,0,0,0.8) 100%
+        );
+      filter:blur(2px);
+      z-index:99998;
+    }
+    /* Strong vignette + curved screen illusion using radial gradient */
+    .crt-vignette{position:fixed;inset:0;pointer-events:none;z-index:99992;background:radial-gradient(ellipse at center, rgba(255,255,255,0) 45%, rgba(0,0,0,0.5) 100%)}
+
+    /* Slight barrel distortion illusion on the main wrapper */
+    .crt-wrap{position:relative;width:100%;height:100%;overflow:hidden;display:flex;flex-direction:column}
+    .crt-screen{
+      transform:perspective(800px) translateZ(0);
+      filter:contrast(1.05) saturate(1.05);
+      padding:0;margin:0;min-height:100vh;
+      display:flex;flex-direction:column;
+    }
+
+    /* Global CRT text splitting (subtle) */
+    /* Uses layered text-shadow for line-splitting / chromatic separation */
+    .crt-text, .crt-text *{
+      color:var(--crt-blue);
+      text-shadow:
+        0 0 6px rgba(10,175,255,0.95), /* glow */
+        1px 0 0 rgba(255,0,128,0.06),  /* magenta offset */
+        -1px 0 0 rgba(0,200,255,0.06); /* cyan offset */
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+    }
+
+    /* SPLASH (static) */
+    #splash{position:fixed;top:0;left:0;width:100%;height:100%;background:#000;display:flex;align-items:center;justify-content:center;flex-direction:column;z-index:99995}
+    .splash-title{font-size:2.6rem;font-weight:700}
+    .splash-sub{color:rgba(10,175,255,0.7);margin-top:8px;font-size:0.9rem}
+
+    /* LOCKSCREEN */
+    #lockscreen{position:fixed;top:0;left:0;width:100%;height:100%;background:linear-gradient(180deg,#000,#00101a);display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:"Courier New",monospace;z-index:99994}
+    #lockText{font-size:1.1rem;margin-bottom:1rem}
+    #lockInput{background:transparent;color:var(--crt-blue);border:1px solid rgba(10,175,255,0.5);padding:10px;width:260px;font-size:1rem;text-align:center}
+    #lockBtn{margin-top:12px;background:transparent;color:var(--crt-blue);border:1px solid rgba(10,175,255,0.6);padding:10px 20px;cursor:pointer}
+
+    /* MAIN SITE */
+    .viewport{height:100vh;scroll-snap-type:y mandatory;overflow-y:scroll;display:none}
     section{height:100vh;display:flex;align-items:center;justify-content:center;scroll-snap-align:center;padding:2rem;box-sizing:border-box}
-    .bar{width:min(900px,95%);background:var(--card);border-radius:16px;padding:28px;box-shadow:0 10px 30px rgba(2,6,23,0.6);backdrop-filter: blur(6px);}
-    .bar h2{margin:0 0 8px 0;font-size:1.4rem}
+    .bar{width:min(900px,95%);background:linear-gradient(180deg, rgba(0,8,15,0.6), rgba(0,6,10,0.55));border-radius:6px;padding:24px;border:1px solid rgba(10,175,255,0.15);box-shadow:inset 0 0 60px rgba(10,175,255,0.03),0 0 40px rgba(10,175,255,0.04)}
+    .bar h2{margin:0 0 8px 0;font-size:1.2rem;color:var(--crt-blue)}
     .controls{display:flex;gap:8px;align-items:center}
-    .controls input{flex:1;padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,0.06);background:var(--glass);color:inherit}
-    .controls button{padding:10px 14px;border-radius:10px;border:0;background:var(--accent);color:#022;font-weight:600;cursor:pointer}
-    .protected-text{margin-top:18px;display:none;background:rgba(255,255,255,0.05);padding:14px;border-radius:10px}
+    .controls input{flex:1;padding:10px;border-radius:4px;border:1px solid rgba(10,175,255,0.12);background:transparent;color:var(--crt-blue)}
+    .controls button{padding:10px 14px;border-radius:4px;border:1px solid rgba(10,175,255,0.15);background:transparent;color:var(--crt-blue);cursor:pointer}
+    .protected-text{margin-top:18px;display:none;background:rgba(0,0,0,0.45);padding:14px;border-radius:4px;border:1px solid rgba(10,175,255,0.08)}
     .unlocked{display:block}
-    .edit-btn{margin-top:10px;padding:6px 10px;border-radius:6px;background:#444;color:#eee;border:0;cursor:pointer;font-size:0.9rem}
+    .edit-btn{margin-top:10px;padding:6px 10px;border-radius:4px;background:transparent;color:var(--crt-blue);border:1px solid rgba(10,175,255,0.12);cursor:pointer;font-size:.9rem}
 
-    #adminPanel{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);display:none;align-items:center;justify-content:center}
-    #adminPanel .panel{background:#0b1220;padding:20px;border-radius:14px;width:90%;max-width:420px}
-    #adminPanel input, #adminPanel textarea{width:100%;padding:10px;margin:6px 0;border-radius:10px;border:1px solid #333;background:#111;color:#fff}
-    #exportBtn{position:fixed;right:12px;bottom:12px;padding:10px 14px;border-radius:10px;background:var(--accent);color:#022;border:0;font-weight:700;cursor:pointer;display:none}
+    #adminPanel{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);display:none;align-items:center;justify-content:center;color:var(--crt-blue)}
+    #adminPanel .panel{background:linear-gradient(180deg,#000,#00101a);padding:20px;border-radius:6px;border:1px solid rgba(10,175,255,0.12);width:90%;max-width:420px}
+    #adminPanel input,#adminPanel textarea{width:100%;padding:10px;margin:6px 0;border-radius:4px;border:1px solid rgba(10,175,255,0.12);background:transparent;color:var(--crt-blue)}
 
+    #exportBtn{position:fixed;right:12px;bottom:12px;padding:10px 14px;border-radius:4px;background:transparent;border:1px solid rgba(10,175,255,0.12);color:var(--crt-blue);font-weight:700;cursor:pointer;display:none}
+
+    /* Subtle fine noise to resemble phosphor grain */
+    .noise{
+      position:fixed;inset:0;pointer-events:none;z-index:99993;background-image:linear-gradient(transparent, rgba(255,255,255,0.01));opacity:0.6;
+      background-size:4px 4px;
+    }
+
+    /* Responsive tweaks */
+    @media (max-width:520px){.splash-title{font-size:1.6rem}.bar{padding:18px}}
   </style>
 </head>
 <body>
+  <div class="crt-wrap crt-text">
+    <div class="crt-screen">
 
-<!-- Splash Screen -->
-<div id="splash" style="position:fixed;top:0;left:0;width:100%;height:100%;background:#0b1220;color:white;display:flex;align-items:center;justify-content:center;flex-direction:column;font-family:Inter,system-ui;z-index:9999">
-  <div style="font-size:2rem;font-weight:700;margin-bottom:10px;">The Archives</div>
-  <div style="width:90px;height:90px;border-radius:50%;background:linear-gradient(135deg,#7dd3fc,#38bdf8,#0ea5e9);display:flex;align-items:center;justify-content:center;font-size:2rem;font-weight:700;color:#022;box-shadow:0 0 20px rgba(125,211,252,0.4);">A</div>
+      <!-- SPLASH (static) -->
+      <div id="splash">
+  <img src="Spl.jpg" alt="Logo" style="width:220px;image-rendering:pixelated;filter:drop-shadow(0 0 6px #0af);">
+</div>
+        <div class="splash-sub">[ LOGO ]</div>
+      </div>
+
+      <!-- LOCKSCREEN -->
+      <div id="lockscreen" class="crt-text">
+        <div id="lockText">ENTER ACCESS PASSWORD:</div>
+        <input id="lockInput" type="password" placeholder="Password">
+        <button id="lockBtn">UNLOCK</button>
+      </div>
+
+      <!-- MAIN SITE -->
+      <button id="enterAdmin" style="position:fixed;top:12px;right:12px;padding:8px 12px;border-radius:6px;border:1px solid rgba(10,175,255,0.12);background:transparent;color:var(--crt-blue);font-weight:700;cursor:pointer">Admin</button>
+      <button id="exportBtn">Download Updated HTML</button>
+
+      <div class="viewport" id="viewport">
+<section><div class="bar">
+<h2>1985 <span class="locked-badge">Locked</span></h2>
+<div class="controls"><input type="password" class="pw-input"><button class="pw-btn">Unlock</button></div>
+<div class="protected-text">Diary log 1
+Hello. I am ***********
+I have just joined this school...</div>
+<button class="edit-btn">Edit</button>
+</div></section>
+<section><div class="bar">
+<h2>The Archives <span class="locked-badge">Locked</span></h2>
+<div class="controls"><input type="password" class="pw-input"><button class="pw-btn">Unlock</button></div>
+<div class="protected-text">Hello. I am not at all certain...</div>
+<button class="edit-btn">Edit</button>
+</div></section>
+<section><div class="bar">
+<h2>The Clues <span class="locked-badge">Locked</span></h2>
+<div class="controls"><input type="password" class="pw-input"><button class="pw-btn">Unlock</button></div>
+<div class="protected-text">How are you getting these hints...</div>
+<button class="edit-btn">Edit</button>
+</div></section>
 </div>
 
-<!-- Lock Screen -->
-<div id="gate" style="position:fixed;top:0;left:0;width:100%;height:100%;background:#020617;display:none;align-items:center;justify-content:center;flex-direction:column;z-index:9998;color:white;font-family:Inter,system-ui;">
-  <h2 style="margin-bottom:12px;">Enter Access Password</h2>
-  <input id="mainPw" type="password" placeholder="Password" style="padding:10px 12px;border-radius:10px;border:1px solid #334155;background:#0f172a;color:white;width:220px;margin-bottom:10px;outline:none" />
-  <button id="mainPwBtn" style="padding:10px 14px;border-radius:10px;border:0;background:#7dd3fc;color:#022;font-weight:700;cursor:pointer;width:220px">Unlock</button>
-</div>
+      <div id="adminPanel"><div class="panel">
+        <h3>Edit Bar</h3>
+        <label>Title</label><input id="editTitle">
+        <label>Password</label><input id="editPassword" type="password">
+        <label>Protected Text</label><textarea id="editText" rows="4"></textarea>
+        <button id="saveEdit" style="margin-top:10px;border:1px solid rgba(10,175,255,0.12);background:transparent;color:var(--crt-blue);padding:10px;border-radius:6px;cursor:pointer">Save</button>
+        <button id="closeAdmin" style="margin-top:10px;border:1px solid rgba(10,175,255,0.12);background:transparent;color:var(--crt-blue);padding:10px;border-radius:6px;cursor:pointer">Cancel</button>
+      </div></div>
 
-<button id="enterAdmin" style="position:fixed;top:12px;right:12px;padding:8px 12px;border-radius:8px;border:0;background:#7dd3fc;color:#022;font-weight:700;cursor:pointer;display:none">Admin</button>
-<button id="exportBtn" style="display:none">Download Updated HTML</button>
+      <div class="noise"></div>
+      <div class="crt-vignette"></div>
 
-<div class="viewport" id="viewport" style="display:none"></div>
+    </div>
+  </div>
 
-<div id="adminPanel" style="display:none">
-// DEFAULT DATA
-const defaultBars = [
-  { title:"Secret Bar #1", password:"apple", text:"The quick brown fox jumps over the lazy dog." },
-  { title:"Secret Bar #2", password:"banana", text:"Do not share this with strangers." },
-  { title:"Secret Bar #3", password:"cherry", text:"Static demo with admin editing." }
+<script>
+// DEFAULT BARS
+const defaultBars=[
+  {title:"1985",password:"1985pass",text:"Diary log content..."},
+  {title:"The Archives",password:"archpass",text:"Archive content..."},
+  {title:"The Clues",password:"cluepass",text:"Clues content..."}
 ];
+let bars=JSON.parse(localStorage.getItem('bars-data')||'null')||defaultBars;
 
-// LOAD DATA FROM LOCAL STORAGE
-let bars = JSON.parse(localStorage.getItem('bars-data') || 'null') || defaultBars;
-
-// RENDER BARS
 async function sha256hex(msg){
-  const data = new TextEncoder().encode(msg);
-  const hash = await crypto.subtle.digest('SHA-256', data);
+  const data=new TextEncoder().encode(msg);
+  const hash=await crypto.subtle.digest('SHA-256',data);
   return Array.from(new Uint8Array(hash)).map(b=>b.toString(16).padStart(2,'0')).join('');
 }
 
+// RENDER BARS
 async function render(){
-  const viewport = document.getElementById('viewport');
-  viewport.innerHTML = '';
-
+  const viewport=document.getElementById('viewport');
+  viewport.innerHTML='';
   for(let i=0;i<bars.length;i++){
-    const bar = document.createElement('section');
-    const content = document.createElement('div');
-    content.className = 'bar';
-    const hash = await sha256hex(bars[i].password);
+    const bar=document.createElement('section');
+    const content=document.createElement('div');
+    content.className='bar crt-text';
+    const hash=await sha256hex(bars[i].password);
 
     content.innerHTML = `
       <h2>${bars[i].title} <span class="locked-badge">Locked</span></h2>
@@ -85,80 +214,78 @@ async function render(){
       <button class="edit-btn">Edit</button>
     `;
 
-    // Unlock Logic
-    const input = content.querySelector('.pw-input');
-    const btn = content.querySelector('.pw-btn');
-    const text = content.querySelector('.protected-text');
-    const badge = content.querySelector('.locked-badge');
+    const input=content.querySelector('.pw-input');
+    const btn=content.querySelector('.pw-btn');
+    const text=content.querySelector('.protected-text');
+    const badge=content.querySelector('.locked-badge');
 
     btn.onclick = async ()=>{
       if(await sha256hex(input.value) === hash){
         text.classList.add('unlocked');
-        badge.textContent = 'Unlocked';
+        badge.textContent='Unlocked';
       }
     };
 
-    // Admin Edit Button
-    content.querySelector('.edit-btn').onclick = ()=>{
-      openAdmin(i);
-    };
-
+    content.querySelector('.edit-btn').onclick = ()=>openAdmin(i);
     bar.appendChild(content);
     viewport.appendChild(bar);
   }
 }
-
 render();
 
 // ADMIN LOGIN
-let adminUnlocked = false;
-
+let adminUnlocked=false;
 document.getElementById('enterAdmin').onclick = ()=>{
-  const pw = prompt("Enter admin password:");
-  if(pw === "admin123"){ // CHANGE THIS
-    adminUnlocked = true;
-    document.getElementById('exportBtn').style.display = 'block';
-    alert("Admin mode enabled.");
-  } else alert("Wrong password.");
+  const pw=prompt('Enter admin password:');
+  if(pw === 'admin123'){adminUnlocked=true;document.getElementById('exportBtn').style.display='block';alert('Admin mode enabled.')}else alert('Wrong password.');
 };
 
 // ADMIN EDIT PANEL
-let editIndex = null;
+let editIndex=null;
 function openAdmin(i){
-  if(!adminUnlocked){ alert("Admin mode locked."); return; }
-  editIndex = i;
-  document.getElementById('editTitle').value = bars[i].title;
-  document.getElementById('editPassword').value = bars[i].password;
-  document.getElementById('editText').value = bars[i].text;
-  document.getElementById('adminPanel').style.display = 'flex';
+  if(!adminUnlocked){alert('Admin mode locked.');return;}
+  editIndex=i;
+  document.getElementById('editTitle').value=bars[i].title;
+  document.getElementById('editPassword').value=bars[i].password;
+  document.getElementById('editText').value=bars[i].text;
+  document.getElementById('adminPanel').style.display='flex';
 }
-
-document.getElementById('closeAdmin').onclick = ()=>{
-  document.getElementById('adminPanel').style.display = 'none';
-};
-
+document.getElementById('closeAdmin').onclick = ()=>{document.getElementById('adminPanel').style.display='none'}
 document.getElementById('saveEdit').onclick = ()=>{
-  bars[editIndex].title = document.getElementById('editTitle').value;
-  bars[editIndex].password = document.getElementById('editPassword').value;
-  bars[editIndex].text = document.getElementById('editText').value;
+  bars[editIndex].title=document.getElementById('editTitle').value;
+  bars[editIndex].password=document.getElementById('editPassword').value;
+  bars[editIndex].text=document.getElementById('editText').value;
   localStorage.setItem('bars-data', JSON.stringify(bars));
-  document.getElementById('adminPanel').style.display = 'none';
+  document.getElementById('adminPanel').style.display='none';
   render();
-};
-
-// EXPORT UPDATED HTML
-function download(filename, text) {
-  const element = document.createElement('a');
-  element.setAttribute('href', 'data:text/html;charset=utf-8,' + encodeURIComponent(text));
-  element.setAttribute('download', filename);
-  document.body.appendChild(element);
-  element.click();
-  document.body.removeChild(element);
 }
 
+// EXPORT
 document.getElementById('exportBtn').onclick = ()=>{
-  download("updated-site.html", document.documentElement.outerHTML);
-};
+  const a=document.createElement('a');
+  a.href='data:text/html,'+encodeURIComponent(document.documentElement.outerHTML);
+  a.download='updated-crt.html';
+  a.click();
+}
+
+// LOCKSCREEN LOGIC
+const lockBtn=document.getElementById('lockBtn');
+lockBtn.onclick = ()=>{
+  const pw=document.getElementById('lockInput').value;
+  if(pw === 'ANTIX238'){
+    document.getElementById('lockscreen').style.display='none';
+    document.getElementById('splash').style.display='none';
+    document.getElementById('viewport').style.display='block';
+  } else alert('Incorrect password');
+}
+
+// Force-remove splash after 1 second
+setTimeout(()=>{
+  const s=document.getElementById('splash');
+  if(s) s.style.display='none';
+  const l=document.getElementById('lockscreen');
+  if(l) l.style.display='flex';
+},1000);
 
 </script>
 </body>
