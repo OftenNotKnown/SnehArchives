@@ -1,118 +1,145 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Download Center</title>
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #f4f4f4;
-        }
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Passworded Vertical Bars — Static</title>
+  <style>
+    :root{--bg:#0f1724;--card:#0b1220;--accent:#7dd3fc;--glass:rgba(255,255,255,0.03)}
+    html,body{height:100%;margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,'Helvetica Neue',Arial}
+    body{background:linear-gradient(180deg,#071023 0%, #071b2a 100%);color:#e6f0ff}
 
-        .container {
-            max-width: 800px;
-            margin: 50px auto;
-            background: white;
-            padding: 30px;
-            border-radius: 16px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-        }
+    /* make each bar full viewport and enable smooth snapping */
+    .viewport{height:100vh;scroll-snap-type:y mandatory;overflow-y:scroll}
+    section{height:100vh;display:flex;align-items:center;justify-content:center;scroll-snap-align:center;padding:2rem;box-sizing:border-box}
 
-        h1 {
-            text-align: center;
-            color: #333;
-        }
+    .bar{width:min(900px,95%);background:linear-gradient(180deg,var(--card),rgba(10,16,26,0.8));border-radius:16px;padding:28px;box-shadow:0 10px 30px rgba(2,6,23,0.6);backdrop-filter: blur(6px);}
+    .bar h2{margin:0 0 8px 0;font-size:1.4rem}
+    .controls{display:flex;gap:8px;align-items:center}
+    .controls input[type=password]{flex:1;padding:10px 12px;border-radius:10px;border:1px solid rgba(255,255,255,0.06);background:var(--glass);color:inherit;outline:none}
+    .controls button{padding:10px 14px;border-radius:10px;border:0;background:var(--accent);color:#022;cursor:pointer;font-weight:600}
+    .protected-text{margin-top:18px;display:none;background:rgba(255,255,255,0.02);padding:14px;border-radius:10px}
+    .hint{margin-top:6px;font-size:0.85rem;color:rgba(230,240,255,0.65)}
 
-        .tabs {
-            display: flex;
-            justify-content: center;
-            margin-top: 30px;
-            border-bottom: 2px solid #ddd;
-        }
+    .unlocked{display:block}
+    .locked-badge{display:inline-block;margin-left:8px;font-size:0.8rem;padding:6px 8px;border-radius:999px;background:rgba(255,255,255,0.03)}
 
-        .tab {
-            padding: 10px 20px;
-            cursor: pointer;
-            font-weight: bold;
-            color: #666;
-            transition: all 0.3s ease;
-            border-bottom: 4px solid transparent;
-        }
+    footer{position:fixed;left:12px;bottom:12px;font-size:13px;color:rgba(230,240,255,0.6)}
 
-        .tab:hover, .tab.active {
-            color: #4CAF50;
-            border-bottom: 4px solid #4CAF50;
-        }
-
-        .tab-content {
-            display: none;
-            padding: 20px 0;
-            animation: fadeIn 0.3s ease;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        .download-button {
-            display: inline-block;
-            background-color: #4CAF50;
-            color: white;
-            padding: 12px 24px;
-            font-size: 15px;
-            margin: 10px;
-            border: none;
-            border-radius: 8px;
-            text-decoration: none;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-
-        .download-button:hover {
-            background-color: #45a049;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-    </style>
+    @media (max-width:640px){.bar{padding:18px;border-radius:12px}}
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Download Center</h1>
-        <div class="tabs">
-            <div class="tab active" onclick="showTab('free')">Free Downloads</div>
-            <div class="tab" onclick="showTab('paid')">Paid Downloads</div>
+  <div class="viewport" id="viewport">
+
+    <!-- Each section is a password-protected "bar" -->
+    <section>
+      <div class="bar" data-id="0">
+        <div style="display:flex;align-items:center;justify-content:space-between">
+          <h2>Secret Bar #1 <span class="locked-badge">Locked</span></h2>
         </div>
-
-        <div id="free" class="tab-content active">
-            <a href="SimplicInstaller.bat" download class="download-button">SimplicEditor</a>
-            <a href="file2.py" download class="download-button">File 2</a>
-            <a href="file3.py" download class="download-button">File 3</a>
-            <a href="file4.py" download class="download-button">File 4</a>
-            <a href="file5.py" download class="download-button">File 5</a>
+        <div class="controls">
+          <input type="password" placeholder="Enter password" class="pw-input" />
+          <button class="pw-btn">Unlock</button>
         </div>
+        <div class="hint">Tip: this is client-side protection (suitable for fun/demo; not highly secure).</div>
+        <div class="protected-text">🎉 Congratulations — you unlocked Bar #1. Here is the secret text: "The quick brown fox jumps over the lazy dog."</div>
+      </div>
+    </section>
 
-        <div id="paid" class="tab-content">
-            <a href="file6.py" download class="download-button">File 6</a>
-            <a href="file7.py" download class="download-button">File 7</a>
-            <a href="file8.py" download class="download-button">File 8</a>
-            <a href="file9.py" download class="download-button">File 9</a>
-            <a href="file10.py" download class="download-button">File 10</a>
+    <section>
+      <div class="bar" data-id="1">
+        <h2>Secret Bar #2 <span class="locked-badge">Locked</span></h2>
+        <div class="controls">
+          <input type="password" placeholder="Enter password" class="pw-input" />
+          <button class="pw-btn">Unlock</button>
         </div>
-    </div>
+        <div class="hint">Each bar has its own password. Change them in the JS "hashes" table.</div>
+        <div class="protected-text">🔓 Bar #2 unlocked: "Do not share this with strangers."</div>
+      </div>
+    </section>
 
-    <script>
-        function showTab(tabId) {
-            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+    <section>
+      <div class="bar" data-id="2">
+        <h2>Secret Bar #3 <span class="locked-badge">Locked</span></h2>
+        <div class="controls">
+          <input type="password" placeholder="Enter password" class="pw-input" />
+          <button class="pw-btn">Unlock</button>
+        </div>
+        <div class="hint">Scroll vertically to move between bars. The site uses scroll-snap for a smooth feel.</div>
+        <div class="protected-text">🔐 Bar #3 unlocked: "This is a static demo protected on the client side."</div>
+      </div>
+    </section>
 
-            document.querySelector([onclick="showTab('${tabId}')"]).classList.add('active');
-            document.getElementById(tabId).classList.add('active');
+  </div>
+
+  <footer>Static demo · deploy to GitHub Pages by pushing this file to your repo and enabling Pages.</footer>
+
+  <script>
+    // Hashes are SHA-256 hex digests of the real passwords (change to your own hashes).
+    // Example passwords used for this demo: "apple", "banana", "cherry"
+    // Their SHA-256 hex digests:
+    const hashes = {
+      0: '3a7bd3e2360a3d29eea436fcfb7e44c735d117c42d1c1835420b6b9942dd4f1b', // apple
+      1: 'b493d48364afe44d11c0165cf470a4164d1e2609911ef998be868d46ade3de4e', // banana
+      2: '2daf0e6c79009f9234ed9baa5bb930898e2847810617e118518d88e4d3140a2e'  // cherry
+    };
+
+    // helper: convert ArrayBuffer -> hex
+    function ab2hex(buf){
+      const arr = Array.from(new Uint8Array(buf));
+      return arr.map(b => b.toString(16).padStart(2,'0')).join('');
+    }
+
+    // compute sha256 hex of a string using Web Crypto
+    async function sha256hex(msg){
+      const enc = new TextEncoder();
+      const data = enc.encode(msg);
+      const hash = await crypto.subtle.digest('SHA-256', data);
+      return ab2hex(hash);
+    }
+
+    // UI wiring
+    document.querySelectorAll('.bar').forEach(bar => {
+      const id = bar.dataset.id;
+      const input = bar.querySelector('.pw-input');
+      const btn = bar.querySelector('.pw-btn');
+      const protectedText = bar.querySelector('.protected-text');
+      const badge = bar.querySelector('.locked-badge');
+
+      btn.addEventListener('click', async () => {
+        const val = input.value || '';
+        const hex = await sha256hex(val);
+        if (hex === hashes[id]){
+          protectedText.classList.add('unlocked');
+          badge.textContent = 'Unlocked';
+          badge.style.background = 'rgba(125,211,252,0.12)';
+          input.value = '';
+        } else {
+          // small shake animation to indicate fail
+          bar.animate([{transform:'translateX(-6px)'},{transform:'translateX(6px)'},{transform:'translateX(0)'}],{duration:300});
         }
-    </script>
+      });
+
+      // allow Enter key
+      input.addEventListener('keyup', (e)=>{ if(e.key==='Enter') btn.click(); });
+    });
+
+    // Optional: preserve unlocked state in session (so if you scroll away it's still visible)
+    const unlocked = new Set();
+    document.querySelectorAll('.bar').forEach((bar)=>{
+      const id = bar.dataset.id;
+      const text = bar.querySelector('.protected-text');
+      if(sessionStorage.getItem('unlocked-'+id) === '1'){
+        text.classList.add('unlocked');
+        bar.querySelector('.locked-badge').textContent = 'Unlocked';
+      }
+      const observer = new MutationObserver(()=>{
+        if(text.classList.contains('unlocked')) sessionStorage.setItem('unlocked-'+id,'1');
+      });
+      observer.observe(text,{attributes:true,attributeFilter:['class']});
+    });
+
+  </script>
 </body>
-</html>    
+</html>
