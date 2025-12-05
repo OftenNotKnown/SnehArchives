@@ -1,3 +1,1 @@
-9# SimplicIDLE
-IDLE Aimed to create an android development environment with python and xml.
-The program runs a python script ontop of an APK package. ie, you can write a program in python using the editor, then use the generate APK feature (Note, when using generate APK, the application downloads important files if they are not currently present on your system, make sure you are connected to the internet and give any express permission the app requires) an APK will be generated inside of the outputs folder. We aim to add a full Kotlin/XML activity programming environment in the future that compiles from a more abstracted language. Thank you for your purchase.
+
