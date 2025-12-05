@@ -126,7 +126,9 @@
       <!-- SPLASH (static) -->
       <div id="splash" class="crt-text">
         <div class="splash-title">THE ARCHIVES</div>
-        <div class="splash-sub">[ 💾 ]</div>
+        <div class="splash-sub">
+          <img src="Spl.png" alt="Logo" style="height:80px; image-rendering:pixelated;">
+        </div>
       </div>
 
       <!-- LOCKSCREEN -->
@@ -179,7 +181,6 @@ I have just joined this school...</div>
   </div>
 
 <script>
-// DEFAULT BARS
 const defaultBars=[
   {title:"1985",password:"1985pass",text:"Diary log content..."},
   {title:"The Archives",password:"archpass",text:"Archive content..."},
@@ -193,7 +194,6 @@ async function sha256hex(msg){
   return Array.from(new Uint8Array(hash)).map(b=>b.toString(16).padStart(2,'0')).join('');
 }
 
-// RENDER BARS
 async function render(){
   const viewport=document.getElementById('viewport');
   viewport.innerHTML='';
@@ -232,14 +232,12 @@ async function render(){
 }
 render();
 
-// ADMIN LOGIN
 let adminUnlocked=false;
 document.getElementById('enterAdmin').onclick = ()=>{
   const pw=prompt('Enter admin password:');
   if(pw === 'admin123'){adminUnlocked=true;document.getElementById('exportBtn').style.display='block';alert('Admin mode enabled.')}else alert('Wrong password.');
 };
 
-// ADMIN EDIT PANEL
 let editIndex=null;
 function openAdmin(i){
   if(!adminUnlocked){alert('Admin mode locked.');return;}
@@ -259,7 +257,6 @@ document.getElementById('saveEdit').onclick = ()=>{
   render();
 }
 
-// EXPORT
 document.getElementById('exportBtn').onclick = ()=>{
   const a=document.createElement('a');
   a.href='data:text/html,'+encodeURIComponent(document.documentElement.outerHTML);
@@ -267,7 +264,6 @@ document.getElementById('exportBtn').onclick = ()=>{
   a.click();
 }
 
-// LOCKSCREEN LOGIC
 const lockBtn=document.getElementById('lockBtn');
 lockBtn.onclick = ()=>{
   const pw=document.getElementById('lockInput').value;
@@ -278,7 +274,6 @@ lockBtn.onclick = ()=>{
   } else alert('Incorrect password');
 }
 
-// Force-remove splash after 1 second
 setTimeout(()=>{
   const s=document.getElementById('splash');
   if(s) s.style.display='none';
