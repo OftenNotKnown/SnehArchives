@@ -235,7 +235,12 @@ render();
 let adminUnlocked=false;
 document.getElementById('enterAdmin').onclick = ()=>{
   const pw=prompt('Enter admin password:');
-  if(pw === 'admin123'){adminUnlocked=true;document.getElementById('exportBtn').style.display='block';alert('Admin mode enabled.')}else alert('Wrong password.');
+  if(pw === 'admin123'){
+    adminUnlocked=true;
+    document.getElementById('exportBtn').style.display='block';
+    document.getElementById('downloadSite').style.display='block'; /* <-- added */
+    alert('Admin mode enabled.');
+  } else alert('Wrong password.');
 };
 
 let editIndex=null;
@@ -283,14 +288,13 @@ setTimeout(()=>{
 
 </script>
 
-<!-- ===== Added: single Download Website button (no other changes) ===== -->
-<button id="downloadSite" style="position:fixed;bottom:20px;right:20px;padding:10px 16px;border:1px solid rgba(10,175,255,0.4);background:transparent;color:#0af;font-family:monospace;cursor:pointer;z-index:999999">Download Website</button>
+<!-- ===== Download button, now hidden by default ===== -->
+<button id="downloadSite" style="display:none;position:fixed;bottom:20px;right:20px;padding:10px 16px;border:1px solid rgba(10,175,255,0.4);background:transparent;color:#0af;font-family:monospace;cursor:pointer;z-index:999999">Download Website</button>
 
 <script>
 // Simple website download function (produces the current DOM as a standalone HTML file)
 const dlBtn = document.getElementById('downloadSite');
 dlBtn.onclick = () => {
-  // We download the current document as-is (outerHTML)
   const blob = new Blob([document.documentElement.outerHTML], { type: 'text/html' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
