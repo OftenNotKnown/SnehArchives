@@ -1,4 +1,6 @@
-<html lang="en"><head>
+<!DOCTYPE html>
+<html lang="en">
+<head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>The Archives — CRT</title>
@@ -18,7 +20,6 @@
     *{animation:none !important;transition:none !important}
 
     /* CRT overlays */
-    /* Stronger scanlines */
     body::before{
       content:"";
       position:fixed;
@@ -41,7 +42,6 @@
       mix-blend-mode:screen;
       z-index:99999;
     }
-    /* Subpixel RGB mask (horizontal stripes) */
     body::after{
       content:"";
       position:fixed;
@@ -54,10 +54,8 @@
       filter:blur(2px);
       z-index:99998;
     }
-    /* Strong vignette + curved screen illusion using radial gradient */
     .crt-vignette{position:fixed;inset:0;pointer-events:none;z-index:99992;background:radial-gradient(ellipse at center, rgba(255,255,255,0) 45%, rgba(0,0,0,0.5) 100%)}
 
-    /* Slight barrel distortion illusion on the main wrapper */
     .crt-wrap{position:relative;width:100%;height:100%;overflow:hidden;display:flex;flex-direction:column}
     .crt-screen{
       transform:perspective(800px) translateZ(0);
@@ -66,30 +64,25 @@
       display:flex;flex-direction:column;
     }
 
-    /* Global CRT text splitting (subtle) */
-    /* Uses layered text-shadow for line-splitting / chromatic separation */
     .crt-text, .crt-text *{
       color:var(--crt-blue);
       text-shadow:
-        0 0 6px rgba(10,175,255,0.95), /* glow */
-        1px 0 0 rgba(255,0,128,0.06),  /* magenta offset */
-        -1px 0 0 rgba(0,200,255,0.06); /* cyan offset */
+        0 0 6px rgba(10,175,255,0.95),
+        1px 0 0 rgba(255,0,128,0.06),
+        -1px 0 0 rgba(0,200,255,0.06);
       -webkit-font-smoothing:antialiased;
       -moz-osx-font-smoothing:grayscale;
     }
 
-    /* SPLASH (static) */
     #splash{position:fixed;top:0;left:0;width:100%;height:100%;background:#000;display:flex;align-items:center;justify-content:center;flex-direction:column;z-index:99995}
     .splash-title{font-size:2.6rem;font-weight:700}
     .splash-sub{color:rgba(10,175,255,0.7);margin-top:8px;font-size:0.9rem}
 
-    /* LOCKSCREEN */
     #lockscreen{position:fixed;top:0;left:0;width:100%;height:100%;background:linear-gradient(180deg,#000,#00101a);display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:"Courier New",monospace;z-index:99994}
     #lockText{font-size:1.1rem;margin-bottom:1rem}
     #lockInput{background:transparent;color:var(--crt-blue);border:1px solid rgba(10,175,255,0.5);padding:10px;width:260px;font-size:1rem;text-align:center}
     #lockBtn{margin-top:12px;background:transparent;color:var(--crt-blue);border:1px solid rgba(10,175,255,0.6);padding:10px 20px;cursor:pointer}
 
-    /* MAIN SITE */
     .viewport{height:100vh;scroll-snap-type:y mandatory;overflow-y:scroll;display:none}
     section{height:100vh;display:flex;align-items:center;justify-content:center;scroll-snap-align:center;padding:2rem;box-sizing:border-box}
     .bar{width:min(900px,95%);background:linear-gradient(180deg, rgba(0,8,15,0.6), rgba(0,6,10,0.55));border-radius:6px;padding:24px;border:1px solid rgba(10,175,255,0.15);box-shadow:inset 0 0 60px rgba(10,175,255,0.03),0 0 40px rgba(10,175,255,0.04)}
@@ -107,13 +100,8 @@
 
     #exportBtn{position:fixed;right:12px;bottom:12px;padding:10px 14px;border-radius:4px;background:transparent;border:1px solid rgba(10,175,255,0.12);color:var(--crt-blue);font-weight:700;cursor:pointer;display:none}
 
-    /* Subtle fine noise to resemble phosphor grain */
-    .noise{
-      position:fixed;inset:0;pointer-events:none;z-index:99993;background-image:linear-gradient(transparent, rgba(255,255,255,0.01));opacity:0.6;
-      background-size:4px 4px;
-    }
+    .noise{position:fixed;inset:0;pointer-events:none;z-index:99993;background-image:linear-gradient(transparent, rgba(255,255,255,0.01));opacity:0.6;background-size:4px 4px;}
 
-    /* Responsive tweaks */
     @media (max-width:520px){.splash-title{font-size:1.6rem}.bar{padding:18px}}
   </style>
 </head>
@@ -121,50 +109,23 @@
   <div class="crt-wrap crt-text">
     <div class="crt-screen">
 
-      <!-- SPLASH (static) -->
-      <div id="splash" class="crt-text" style="display: none;">
+      <div id="splash" class="crt-text">
         <div class="splash-title">THE ARCHIVES</div>
         <div class="splash-sub">
           <img src="SnehArchives/Spl.png" alt="Logo" style="height:80px; image-rendering:pixelated;">
         </div>
       </div>
 
-      <!-- LOCKSCREEN -->
-      <div id="lockscreen" class="crt-text" style="display: none;">
+      <div id="lockscreen" class="crt-text">
         <div id="lockText">ENTER ACCESS PASSWORD:</div>
         <input id="lockInput" type="password" placeholder="Password">
         <button id="lockBtn">UNLOCK</button>
       </div>
 
-      <!-- MAIN SITE -->
       <button id="enterAdmin" style="position:fixed;top:12px;right:12px;padding:8px 12px;border-radius:6px;border:1px solid rgba(10,175,255,0.12);background:transparent;color:var(--crt-blue);font-weight:700;cursor:pointer">Admin</button>
-      <button id="exportBtn" style="display: block;">Download Updated HTML</button>
-
-      <div class="viewport" id="viewport" style="display: block;"><section><div class="bar crt-text">
-      <h2>1985 <span class="locked-badge">Locked</span></h2>
-      <div class="controls">
-        <input type="password" placeholder="Enter password" class="pw-input">
-        <button class="pw-btn">Unlock</button>
-      </div>
-      <div class="protected-text">Diary log content...nshsnshsbennenen</div>
-      <button class="edit-btn">Edit</button>
-    </div></section><section><div class="bar crt-text">
-      <h2>The Archives <span class="locked-badge">Locked</span></h2>
-      <div class="controls">
-        <input type="password" placeholder="Enter password" class="pw-input">
-        <button class="pw-btn">Unlock</button>
-      </div>
-      <div class="protected-text">Archive content...</div>
-      <button class="edit-btn">Edit</button>
-    </div></section><section><div class="bar crt-text">
-      <h2>The Clues <span class="locked-badge">Locked</span></h2>
-      <div class="controls">
-        <input type="password" placeholder="Enter password" class="pw-input">
-        <button class="pw-btn">Unlock</button>
-      </div>
-      <div class="protected-text">Clues content...</div>
-      <button class="edit-btn">Edit</button>
-    </div></section></div>
+      <button id="exportBtn">Download Updated HTML</button>
+      <button id="createBarBtn" style="display:none;position:fixed;bottom:70px;right:20px;padding:10px 16px;border:1px solid rgba(10,175,255,0.4);background:transparent;color:#0af;font-family:monospace;cursor:pointer;z-index:999999;">+ New Bar</button>
+      <div id="viewport" class="viewport"></div>
 
       <div id="adminPanel"><div class="panel">
         <h3>Edit Bar</h3>
@@ -234,17 +195,19 @@ async function render(){
 render();
 
 let adminUnlocked=false;
+let editIndex=null;
+
 document.getElementById('enterAdmin').onclick = ()=>{
-  const pw=prompt('Enter admin password:');
+  const pw = prompt('Enter admin password:');
   if(pw === 'admin123'){
     adminUnlocked=true;
     document.getElementById('exportBtn').style.display='block';
-    document.getElementById('downloadSite').style.display='block'; /* <-- added */
+    document.getElementById('downloadSite').style.display='block';
+    document.getElementById('createBarBtn').style.display='block';
     alert('Admin mode enabled.');
   } else alert('Wrong password.');
 };
 
-let editIndex=null;
 function openAdmin(i){
   if(!adminUnlocked){alert('Admin mode locked.');return;}
   editIndex=i;
@@ -253,7 +216,11 @@ function openAdmin(i){
   document.getElementById('editText').value=bars[i].text;
   document.getElementById('adminPanel').style.display='flex';
 }
-document.getElementById('closeAdmin').onclick = ()=>{document.getElementById('adminPanel').style.display='none'}
+
+document.getElementById('closeAdmin').onclick = ()=>{
+  document.getElementById('adminPanel').style.display='none';
+}
+
 document.getElementById('saveEdit').onclick = ()=>{
   bars[editIndex].title=document.getElementById('editTitle').value;
   bars[editIndex].password=document.getElementById('editPassword').value;
@@ -268,6 +235,19 @@ document.getElementById('exportBtn').onclick = ()=>{
   a.href='data:text/html,'+encodeURIComponent(document.documentElement.outerHTML);
   a.download='updated-crt.html';
   a.click();
+}
+
+// CREATE NEW BAR
+document.getElementById('createBarBtn').onclick = () => {
+  if(!adminUnlocked) return;
+  const title = prompt("Enter new bar title:");
+  if(!title) return;
+  const password = prompt("Enter password for this bar (leave blank for none):") || "";
+  const text = prompt("Enter content for this bar:") || "";
+  bars.push({title,password,text});
+  localStorage.setItem('bars-data', JSON.stringify(bars));
+  render();
+  alert("New bar created successfully!");
 }
 
 const lockBtn=document.getElementById('lockBtn');
@@ -286,14 +266,11 @@ setTimeout(()=>{
   const l=document.getElementById('lockscreen');
   if(l) l.style.display='flex';
 },1000);
-
 </script>
 
-<!-- ===== Download button, now hidden by default ===== -->
-<button id="downloadSite" style="display: block; position: fixed; bottom: 20px; right: 20px; padding: 10px 16px; border: 1px solid rgba(10, 175, 255, 0.4); background: transparent; color: rgb(0, 170, 255); font-family: monospace; cursor: pointer; z-index: 999999;">Download Website</button>
+<button id="downloadSite" style="display:none;position:fixed;bottom:20px;right:20px;padding:10px 16px;border:1px solid rgba(10,175,255,0.4);background:transparent;color:#0af;font-family:monospace;cursor:pointer;z-index:999999">Download Website</button>
 
 <script>
-// Simple website download function (produces the current DOM as a standalone HTML file)
 const dlBtn = document.getElementById('downloadSite');
 dlBtn.onclick = () => {
   const blob = new Blob([document.documentElement.outerHTML], { type: 'text/html' });
@@ -304,6 +281,5 @@ dlBtn.onclick = () => {
 };
 </script>
 
-
-
-</body></html>
+</body>
+</html>
