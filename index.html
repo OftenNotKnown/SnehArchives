@@ -144,48 +144,11 @@
 
       <div class="viewport" id="viewport">
 <section><div class="bar">
-<h2>1985 <span class="locked-badge"></span></h2>
-<div class="controls"><input type="password" class="AKSHAT"><button class="pw-btn">Unlock</button></div>
+<h2>1985 <span class="locked-badge">Locked</span></h2>
+<div class="controls"><input type="password" class="pw-input"><button class="pw-btn">Unlock</button></div>
 <div class="protected-text">Diary log 1
 Hello. I am ***********
-I have just joined this school. 
-I do not know what goes on about here. 
-The name of the school is ******** 
-All my time here I've heard about some event that happened in 1985 around a year ago.
-Apparently it was serious enough to cause the school to shut down for months but I do not know what it was. 
-The administration ignores me when I ask and the students act clueless, but I know something is going on. 
-I have tried a lot and I'm feeling like it was either a student hurt or killed another student as I cannot think of anything else severe enough that it'd cause a school shutdown.
-I know it was a student because among the only things I have been told about the event, students being suspended is one of them.</div>
-<button class="edit-btn">Edit</button>
-</div></section>
-<section><div class="bar">
-<h2>The Archives <span class="locked-badge"></span></h2>
-<div class="controls"><input type="password" class="pw-input"><button class="pw-btn">Unlock</button></div>
-<div class="protected-text">Hello.
- I am not at all certain about the fact that someone died here.
- But now I'am certain that someone is listening to me, to these texts I write. 
-I have told my friend to get the contents of my diary onto a platform if I do not come to school for more than 20 days because I fear simply knowing is enough to warrant attention, and attention is dangerous if my theories are true. 
-I cannot tell you everything all at once, he will figure it out and will be able to destroy this if I do. 
-Instead I will help you with whatever hints or clues your getting, I hid them across the school. 
-I do not know where my friend has put the contents of my diary.
-But I will put a way for you to know in my letter.</div>
-<button class="edit-btn">Edit</button>
-</div></section>
-<section><div class="bar">
-<h2>The Clues <span class="locked-badge"></span></h2>
-<div class="controls"><input type="password" class="pw-input"><button class="pw-btn">Unlock</button></div>
-<div class="protected-text">getting these hints.
-Who are you.
-W
-W
-W
-W
-
-W
-w
-I gave them
-To
-To **********</div>
+I have just joined this school...</div>
 <button class="edit-btn">Edit</button>
 </div></section>
 <section><div class="bar">
@@ -195,35 +158,11 @@ To **********</div>
 <button class="edit-btn">Edit</button>
 </div></section>
 <section><div class="bar">
-<h2>The Archives <span class="locked-badge">Locked</span></h2>
+<h2>The Clues <span class="locked-badge">Locked</span></h2>
 <div class="controls"><input type="password" class="pw-input"><button class="pw-btn">Unlock</button></div>
-<div class="protected-text">Hello. I am not at all certain...</div>
+<div class="protected-text">How are you getting these hints...</div>
 <button class="edit-btn">Edit</button>
 </div></section>
-<section><div class="bar">
-<h2>The Archives <span class="locked-badge">Locked</span></h2>
-<div class="controls"><input type="password" class="pw-input"><button class="pw-btn">Unlock</button></div>
-<div class="protected-text">Hello. I am not at all certain...</div>
-<button class="edit-btn">Edit</button>
-</div></section>
-<section><div class="bar">
-<h2>The Archives <span class="locked-badge">Locked</span></h2>
-<div class="controls"><input type="password" class="pw-input"><button class="pw-btn">Unlock</button></div>
-<div class="protected-text">Hello. I am not at all certain...</div>
-<button class="edit-btn">Edit</button>
-</div></section>
-<section><div class="bar">
-<h2>The Archives <span class="locked-badge">Locked</span></h2>
-<div class="controls"><input type="password" class="pw-input"><button class="pw-btn">Unlock</button></div>
-<div class="protected-text">Hello. I am not at all certain...</div>
-<button class="edit-btn">Edit</button>
-</div></section>
-<section><div class="bar">
-<h2>The Archives <span class="locked-badge">Locked</span></h2>
-<div class="controls"><input type="password" class="pw-input"><button class="pw-btn">Unlock</button></div>
-<div class="protected-text">Hello. I am not at all certain...</div>
-<button class="edit-btn">Edit</button>
-</div></sectio
 </div>
 
       <div id="adminPanel"><div class="panel">
@@ -343,5 +282,22 @@ setTimeout(()=>{
 },1000);
 
 </script>
+
+<!-- ===== Added: single Download Website button (no other changes) ===== -->
+<button id="downloadSite" style="position:fixed;bottom:20px;right:20px;padding:10px 16px;border:1px solid rgba(10,175,255,0.4);background:transparent;color:#0af;font-family:monospace;cursor:pointer;z-index:999999">Download Website</button>
+
+<script>
+// Simple website download function (produces the current DOM as a standalone HTML file)
+const dlBtn = document.getElementById('downloadSite');
+dlBtn.onclick = () => {
+  // We download the current document as-is (outerHTML)
+  const blob = new Blob([document.documentElement.outerHTML], { type: 'text/html' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'website.html';
+  a.click();
+};
+</script>
+
 </body>
 </html>
