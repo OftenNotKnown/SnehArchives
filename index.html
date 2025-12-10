@@ -13,49 +13,27 @@
       --glass:rgba(0,20,40,0.3);
     }
 
-    /* Base */
     html,body{height:100%;margin:0;font-family:"Courier New",monospace;background:var(--bg);color:var(--crt-blue);letter-spacing:0.4px}
-
-    /* Make everything static */
     *{animation:none !important;transition:none !important}
 
-    /* CRT overlays */
     body::before{
       content:"";
       position:fixed;
       top:0;left:0;width:100%;height:100%;pointer-events:none;
       background:
-        repeating-linear-gradient(
-          to bottom,
-          rgba(255,255,255,0.10) 0px,
-          rgba(255,255,255,0.10) 1px,
-          rgba(0,0,0,0) 3px,
-          rgba(0,0,0,0) 6px
-        ),
-        repeating-linear-gradient(
-          to right,
-          rgba(0,150,255,0.05) 0px,
-          rgba(0,150,255,0.05) 1px,
-          rgba(0,0,0,0) 2px,
-          rgba(0,0,0,0) 4px
-        );
-      mix-blend-mode:screen;
-      z-index:99999;
+        repeating-linear-gradient(to bottom,rgba(255,255,255,0.10) 0px,rgba(255,255,255,0.10) 1px,rgba(0,0,0,0) 3px,rgba(0,0,0,0) 6px),
+        repeating-linear-gradient(to right,rgba(0,150,255,0.05) 0px,rgba(0,150,255,0.05) 1px,rgba(0,0,0,0) 2px,rgba(0,0,0,0) 4px);
+      mix-blend-mode:screen;z-index:99999;
     }
     body::after{
       content:"";
       position:fixed;
       top:0;left:0;width:100%;height:100%;pointer-events:none;
-      background:
-        radial-gradient(circle at center,
-          rgba(0,0,0,0) 50%,
-          rgba(0,0,0,0.8) 100%
-        );
+      background:radial-gradient(circle at center,rgba(0,0,0,0) 50%,rgba(0,0,0,0.8) 100%);
       filter:blur(2px);
       z-index:99998;
     }
     .crt-vignette{position:fixed;inset:0;pointer-events:none;z-index:99992;background:radial-gradient(ellipse at center, rgba(255,255,255,0) 45%, rgba(0,0,0,0.5) 100%)}
-
     .crt-wrap{position:relative;width:100%;height:100%;overflow:hidden;display:flex;flex-direction:column}
     .crt-screen{
       transform:perspective(800px) translateZ(0);
@@ -63,13 +41,9 @@
       padding:0;margin:0;min-height:100vh;
       display:flex;flex-direction:column;
     }
-
     .crt-text, .crt-text *{
       color:var(--crt-blue);
-      text-shadow:
-        0 0 6px rgba(10,175,255,0.95),
-        1px 0 0 rgba(255,0,128,0.06),
-        -1px 0 0 rgba(0,200,255,0.06);
+      text-shadow:0 0 6px rgba(10,175,255,0.95),1px 0 0 rgba(255,0,128,0.06),-1px 0 0 rgba(0,200,255,0.06);
       -webkit-font-smoothing:antialiased;
       -moz-osx-font-smoothing:grayscale;
     }
@@ -106,41 +80,45 @@
   </style>
 </head>
 <body>
-  <div class="crt-wrap crt-text">
-    <div class="crt-screen">
+<div class="crt-wrap crt-text">
+  <div class="crt-screen">
 
-      <div id="splash" class="crt-text">
-        <div class="splash-title">THE ARCHIVES</div>
-        <div class="splash-sub">
-          <img src="SnehArchives/Spl.png" alt="Logo" style="height:80px; image-rendering:pixelated;">
-        </div>
+    <div id="splash" class="crt-text">
+      <div class="splash-title">THE ARCHIVES</div>
+      <div class="splash-sub">
+        <img src="SnehArchives/Spl.png" alt="Logo" style="height:80px; image-rendering:pixelated;">
       </div>
+    </div>
 
-      <div id="lockscreen" class="crt-text">
-        <div id="lockText">ENTER ACCESS PASSWORD:</div>
-        <input id="lockInput" type="password" placeholder="Password">
-        <button id="lockBtn">UNLOCK</button>
-      </div>
+    <div id="lockscreen" class="crt-text">
+      <div id="lockText">ENTER ACCESS PASSWORD:</div>
+      <input id="lockInput" type="password" placeholder="Password">
+      <button id="lockBtn">UNLOCK</button>
+    </div>
 
-      <button id="enterAdmin" style="position:fixed;top:12px;right:12px;padding:8px 12px;border-radius:6px;border:1px solid rgba(10,175,255,0.12);background:transparent;color:var(--crt-blue);font-weight:700;cursor:pointer">Admin</button>
-      <button id="exportBtn">Download Updated HTML</button>
-      <button id="createBarBtn" style="display:none;position:fixed;bottom:70px;right:20px;padding:10px 16px;border:1px solid rgba(10,175,255,0.4);background:transparent;color:#0af;font-family:monospace;cursor:pointer;z-index:999999;">+ New Bar</button>
-      <div id="viewport" class="viewport"></div>
+    <button id="enterAdmin" style="position:fixed;top:12px;right:12px;padding:8px 12px;border-radius:6px;border:1px solid rgba(10,175,255,0.12);background:transparent;color:var(--crt-blue);font-weight:700;cursor:pointer">Admin</button>
+    <button id="exportBtn">Download Updated HTML</button>
 
-      <div id="adminPanel"><div class="panel">
+    <div class="viewport" id="viewport"></div>
+
+    <div id="adminPanel">
+      <div class="panel">
         <h3>Edit Bar</h3>
         <label>Title</label><input id="editTitle">
         <label>Password</label><input id="editPassword" type="password">
         <label>Protected Text</label><textarea id="editText" rows="4"></textarea>
         <button id="saveEdit" style="margin-top:10px;border:1px solid rgba(10,175,255,0.12);background:transparent;color:var(--crt-blue);padding:10px;border-radius:6px;cursor:pointer">Save</button>
         <button id="closeAdmin" style="margin-top:10px;border:1px solid rgba(10,175,255,0.12);background:transparent;color:var(--crt-blue);padding:10px;border-radius:6px;cursor:pointer">Cancel</button>
-      </div></div>
-
-      <div class="noise"></div>
-      <div class="crt-vignette"></div>
-
+        <button id="addBar" style="margin-top:10px;border:1px solid rgba(10,175,255,0.12);background:transparent;color:var(--crt-blue);padding:10px;border-radius:6px;cursor:pointer">+ Add New Bar</button>
+      </div>
     </div>
+
+    <div class="noise"></div>
+    <div class="crt-vignette"></div>
   </div>
+</div>
+
+<button id="downloadSite" style="display:none;position:fixed;bottom:20px;right:20px;padding:10px 16px;border:1px solid rgba(10,175,255,0.4);background:transparent;color:#0af;font-family:monospace;cursor:pointer;z-index:999999">Download Website</button>
 
 <script>
 const defaultBars=[
@@ -164,7 +142,6 @@ async function render(){
     const content=document.createElement('div');
     content.className='bar crt-text';
     const hash=await sha256hex(bars[i].password);
-
     content.innerHTML = `
       <h2>${bars[i].title} <span class="locked-badge">Locked</span></h2>
       <div class="controls">
@@ -174,19 +151,16 @@ async function render(){
       <div class="protected-text">${bars[i].text}</div>
       <button class="edit-btn">Edit</button>
     `;
-
     const input=content.querySelector('.pw-input');
     const btn=content.querySelector('.pw-btn');
     const text=content.querySelector('.protected-text');
     const badge=content.querySelector('.locked-badge');
-
     btn.onclick = async ()=>{
       if(await sha256hex(input.value) === hash){
         text.classList.add('unlocked');
         badge.textContent='Unlocked';
       }
     };
-
     content.querySelector('.edit-btn').onclick = ()=>openAdmin(i);
     bar.appendChild(content);
     viewport.appendChild(bar);
@@ -195,19 +169,17 @@ async function render(){
 render();
 
 let adminUnlocked=false;
-let editIndex=null;
-
 document.getElementById('enterAdmin').onclick = ()=>{
-  const pw = prompt('Enter admin password:');
+  const pw=prompt('Enter admin password:');
   if(pw === 'admin123'){
     adminUnlocked=true;
     document.getElementById('exportBtn').style.display='block';
     document.getElementById('downloadSite').style.display='block';
-    document.getElementById('createBarBtn').style.display='block';
     alert('Admin mode enabled.');
   } else alert('Wrong password.');
 };
 
+let editIndex=null;
 function openAdmin(i){
   if(!adminUnlocked){alert('Admin mode locked.');return;}
   editIndex=i;
@@ -216,11 +188,7 @@ function openAdmin(i){
   document.getElementById('editText').value=bars[i].text;
   document.getElementById('adminPanel').style.display='flex';
 }
-
-document.getElementById('closeAdmin').onclick = ()=>{
-  document.getElementById('adminPanel').style.display='none';
-}
-
+document.getElementById('closeAdmin').onclick = ()=>{document.getElementById('adminPanel').style.display='none'}
 document.getElementById('saveEdit').onclick = ()=>{
   bars[editIndex].title=document.getElementById('editTitle').value;
   bars[editIndex].password=document.getElementById('editPassword').value;
@@ -230,24 +198,28 @@ document.getElementById('saveEdit').onclick = ()=>{
   render();
 }
 
-document.getElementById('exportBtn').onclick = ()=>{
-  const a=document.createElement('a');
-  a.href='data:text/html,'+encodeURIComponent(document.documentElement.outerHTML);
-  a.download='updated-crt.html';
-  a.click();
-}
-
-// CREATE NEW BAR
-document.getElementById('createBarBtn').onclick = () => {
-  if(!adminUnlocked) return;
-  const title = prompt("Enter new bar title:");
-  if(!title) return;
-  const password = prompt("Enter password for this bar (leave blank for none):") || "";
-  const text = prompt("Enter content for this bar:") || "";
-  bars.push({title,password,text});
+// Add new bar
+document.getElementById('addBar').onclick = ()=>{
+  bars.push({title:"New Bar", password:"", text:""});
   localStorage.setItem('bars-data', JSON.stringify(bars));
   render();
-  alert("New bar created successfully!");
+  editIndex = bars.length - 1;
+  openAdmin(editIndex);
+}
+
+document.getElementById('exportBtn').onclick = ()=>{
+  fetch(window.location.href).then(r=>r.text()).then(origHTML=>{
+    const newBarsJSON = JSON.stringify(bars);
+    const updatedHTML = origHTML.replace(
+      /let bars=JSON\.parse\(localStorage\.getItem\('bars-data'\)\|\|'null'\)\|\|defaultBars;/,
+      `let bars=${newBarsJSON};`
+    );
+    const blob = new Blob([updatedHTML], { type: 'text/html' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'updated-crt.html';
+    a.click();
+  });
 }
 
 const lockBtn=document.getElementById('lockBtn');
@@ -261,14 +233,10 @@ lockBtn.onclick = ()=>{
 }
 
 setTimeout(()=>{
-  const s=document.getElementById('splash');
-  if(s) s.style.display='none';
-  const l=document.getElementById('lockscreen');
-  if(l) l.style.display='flex';
+  document.getElementById('splash').style.display='none';
+  document.getElementById('lockscreen').style.display='flex';
 },1000);
 </script>
-
-<button id="downloadSite" style="display:none;position:fixed;bottom:20px;right:20px;padding:10px 16px;border:1px solid rgba(10,175,255,0.4);background:transparent;color:#0af;font-family:monospace;cursor:pointer;z-index:999999">Download Website</button>
 
 <script>
 const dlBtn = document.getElementById('downloadSite');
@@ -280,6 +248,5 @@ dlBtn.onclick = () => {
   a.click();
 };
 </script>
-
 </body>
 </html>
