@@ -207,6 +207,7 @@ document.getElementById('addBar').onclick = ()=>{
   openAdmin(editIndex);
 }
 
+// Export / Download Updated HTML
 document.getElementById('exportBtn').onclick = ()=>{
   fetch(window.location.href).then(r=>r.text()).then(origHTML=>{
     const newBarsJSON = JSON.stringify(bars);
@@ -236,16 +237,21 @@ setTimeout(()=>{
   document.getElementById('splash').style.display='none';
   document.getElementById('lockscreen').style.display='flex';
 },1000);
-</script>
 
-<script>
+// Download full site button always resets downloaded copy
 const dlBtn = document.getElementById('downloadSite');
 dlBtn.onclick = () => {
-  const blob = new Blob([document.documentElement.outerHTML], { type: 'text/html' });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = 'website.html';
-  a.click();
+  fetch(window.location.href).then(r => r.text()).then(origHTML => {
+    const resetHTML = origHTML.replace(
+      /let bars=JSON\.parse\(localStorage\.getItem\('bars-data'\)\|\|'null'\)\|\|defaultBars;/,
+      `let bars=defaultBars;`
+    );
+    const blob = new Blob([resetHTML], { type: 'text/html' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'website.html';
+    a.click();
+  });
 };
 </script>
 </body>
