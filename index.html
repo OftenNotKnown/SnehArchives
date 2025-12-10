@@ -207,7 +207,7 @@ document.getElementById('addBar').onclick = ()=>{
   openAdmin(editIndex);
 }
 
-// Export / Download Updated HTML
+// Export button already works
 document.getElementById('exportBtn').onclick = ()=>{
   fetch(window.location.href).then(r=>r.text()).then(origHTML=>{
     const newBarsJSON = JSON.stringify(bars);
@@ -223,6 +223,7 @@ document.getElementById('exportBtn').onclick = ()=>{
   });
 }
 
+// Lock screen
 const lockBtn=document.getElementById('lockBtn');
 lockBtn.onclick = ()=>{
   const pw=document.getElementById('lockInput').value;
@@ -238,15 +239,16 @@ setTimeout(()=>{
   document.getElementById('lockscreen').style.display='flex';
 },1000);
 
-// Download full site button always resets downloaded copy
+// FIXED Download Website button to include current edits
 const dlBtn = document.getElementById('downloadSite');
 dlBtn.onclick = () => {
   fetch(window.location.href).then(r => r.text()).then(origHTML => {
-    const resetHTML = origHTML.replace(
+    const newBarsJSON = JSON.stringify(bars);
+    const updatedHTML = origHTML.replace(
       /let bars=JSON\.parse\(localStorage\.getItem\('bars-data'\)\|\|'null'\)\|\|defaultBars;/,
-      `let bars=defaultBars;`
+      `let bars=${newBarsJSON};`
     );
-    const blob = new Blob([resetHTML], { type: 'text/html' });
+    const blob = new Blob([updatedHTML], { type: 'text/html' });
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
     a.download = 'website.html';
