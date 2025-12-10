@@ -138,36 +138,33 @@
 
       <!-- MAIN SITE -->
       <button id="enterAdmin" style="position:fixed;top:12px;right:12px;padding:8px 12px;border-radius:6px;border:1px solid rgba(10,175,255,0.12);background:transparent;color:var(--crt-blue);font-weight:700;cursor:pointer">Admin</button>
-      <button id="exportBtn" style="display: none;">Download Updated HTML</button>
-      <button id="createBarBtn" style="display:none; position:fixed; bottom:70px; right:20px; padding:10px 16px; border:1px solid rgba(10,175,255,0.4); background:transparent; color:#0af; font-family:monospace; cursor:pointer; z-index:999999;">Create New Bar</button>
+      <button id="exportBtn" style="display: block;">Download Updated HTML</button>
 
-      <div class="viewport" id="viewport" style="display: block;">
-        <section><div class="bar crt-text">
-        <h2>1985 <span class="locked-badge">Locked</span></h2>
-        <div class="controls">
-          <input type="password" placeholder="Enter password" class="pw-input">
-          <button class="pw-btn">Unlock</button>
-        </div>
-        <div class="protected-text">Diary log content...nshsnshsbennenen</div>
-        <button class="edit-btn">Edit</button>
-      </div></section><section><div class="bar crt-text">
-        <h2>The Archives <span class="locked-badge">Locked</span></h2>
-        <div class="controls">
-          <input type="password" placeholder="Enter password" class="pw-input">
-          <button class="pw-btn">Unlock</button>
-        </div>
-        <div class="protected-text">Archive content...</div>
-        <button class="edit-btn">Edit</button>
-      </div></section><section><div class="bar crt-text">
-        <h2>The Clues <span class="locked-badge">Locked</span></h2>
-        <div class="controls">
-          <input type="password" placeholder="Enter password" class="pw-input">
-          <button class="pw-btn">Unlock</button>
-        </div>
-        <div class="protected-text">Clues content...</div>
-        <button class="edit-btn">Edit</button>
-      </div></section>
+      <div class="viewport" id="viewport" style="display: block;"><section><div class="bar crt-text">
+      <h2>1985 <span class="locked-badge">Locked</span></h2>
+      <div class="controls">
+        <input type="password" placeholder="Enter password" class="pw-input">
+        <button class="pw-btn">Unlock</button>
       </div>
+      <div class="protected-text">Diary log content...nshsnshsbennenen</div>
+      <button class="edit-btn">Edit</button>
+    </div></section><section><div class="bar crt-text">
+      <h2>The Archives <span class="locked-badge">Locked</span></h2>
+      <div class="controls">
+        <input type="password" placeholder="Enter password" class="pw-input">
+        <button class="pw-btn">Unlock</button>
+      </div>
+      <div class="protected-text">Archive content...</div>
+      <button class="edit-btn">Edit</button>
+    </div></section><section><div class="bar crt-text">
+      <h2>The Clues <span class="locked-badge">Locked</span></h2>
+      <div class="controls">
+        <input type="password" placeholder="Enter password" class="pw-input">
+        <button class="pw-btn">Unlock</button>
+      </div>
+      <div class="protected-text">Clues content...</div>
+      <button class="edit-btn">Edit</button>
+    </div></section></div>
 
       <div id="adminPanel"><div class="panel">
         <h3>Edit Bar</h3>
@@ -242,8 +239,7 @@ document.getElementById('enterAdmin').onclick = ()=>{
   if(pw === 'admin123'){
     adminUnlocked=true;
     document.getElementById('exportBtn').style.display='block';
-    document.getElementById('downloadSite').style.display='block';
-    document.getElementById('createBarBtn').style.display='block'; /* NEW */
+    document.getElementById('downloadSite').style.display='block'; /* <-- added */
     alert('Admin mode enabled.');
   } else alert('Wrong password.');
 };
@@ -291,7 +287,13 @@ setTimeout(()=>{
   if(l) l.style.display='flex';
 },1000);
 
-// ===== Download button =====
+</script>
+
+<!-- ===== Download button, now hidden by default ===== -->
+<button id="downloadSite" style="display: block; position: fixed; bottom: 20px; right: 20px; padding: 10px 16px; border: 1px solid rgba(10, 175, 255, 0.4); background: transparent; color: rgb(0, 170, 255); font-family: monospace; cursor: pointer; z-index: 999999;">Download Website</button>
+
+<script>
+// Simple website download function (produces the current DOM as a standalone HTML file)
 const dlBtn = document.getElementById('downloadSite');
 dlBtn.onclick = () => {
   const blob = new Blob([document.documentElement.outerHTML], { type: 'text/html' });
@@ -300,22 +302,8 @@ dlBtn.onclick = () => {
   a.download = 'website.html';
   a.click();
 };
-
-// ===== Create New Bar (Admin Mode) =====
-document.getElementById('createBarBtn').onclick = () => {
-  if (!adminUnlocked) return;
-
-  const title = prompt("Enter bar title:");
-  if (!title) return;
-
-  const password = prompt("Enter bar password (leave blank for none):") || "";
-  const text = prompt("Enter bar content:") || "";
-
-  bars.push({ title, password, text });
-  localStorage.setItem('bars-data', JSON.stringify(bars));
-  render();
-  alert("New bar created.");
-};
 </script>
+
+
 
 </body></html>
